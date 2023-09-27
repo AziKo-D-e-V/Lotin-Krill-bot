@@ -25,10 +25,10 @@ const bootstrap = async (bot) => {
       useUnifiedTopology: true,
     };
     connect(config.DB_URL, connetParams);
-    console.log("Database connection");
+    console.log("Lotin-Krill-bot Database connection");
   } catch (error) {
     console.log(error.message);
   }
 };
 bootstrap();
-bot.start(console.log("bot started"));
+bot.start(console.log("Lotin-Krill-bot started"));
