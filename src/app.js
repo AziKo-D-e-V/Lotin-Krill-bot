@@ -5,6 +5,7 @@ require("dotenv/config");
 const BotController = require("./modules/bot1");
 const commandBot = require("./helper/commands");
 const token = config.TOKEN;
+
 const bot = new Bot(token);
 
 bot.use(
