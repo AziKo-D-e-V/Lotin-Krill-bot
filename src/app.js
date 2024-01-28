@@ -57,6 +57,12 @@ const bootstrap = async (bot) => {
         res.render("index", { count: 0 });
       }
     });
+
+    app.get("/test", async (req, res) => {
+      console.log(new Date());
+      res.status(200).json({ results: success, time: new Date() });
+    });
+    
   } catch (error) {
     console.log(error.message);
   }
