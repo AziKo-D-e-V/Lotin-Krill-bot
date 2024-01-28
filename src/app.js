@@ -1,14 +1,24 @@
 const config = require("./config");
+const cors = require("cors");
 const express = require("express");
+const path = require("path");
 const { connect } = require("mongoose");
+const usersModel = require("./models/users.model");
 const { Bot, session } = require("grammy");
 require("dotenv/config");
 
 const BotController = require("./modules/bot1");
 const commandBot = require("./helper/commands");
+const messagesModel = require("./models/messages.model");
 const token = config.TOKEN;
 
 const app = express();
+app.use(cors());
+app.use(express.static(path.join(__dirname, "public")));
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 const bot = new Bot(token);
 
 bot.use(
@@ -34,26 +44,24 @@ const bootstrap = async (bot) => {
     app.listen(config.PORT, () => {
       console.log(`------ ${config.PORT} --------`);
     });
+
+    app.get("/", async (req, res) => {
+      try {
+        const count = await usersModel.countDocuments();
+        const countMessage = await messagesModel.countDocuments();
+        console.log("Count is", count);
+        console.log("Count Message is", countMessage);
+        res.render("index", { count: count, countMessage: countMessage });
+      } catch (error) {
+        console.log(error);
+        res.render("index", { count: 0 });
+      }
+    });
   } catch (error) {
     console.log(error.message);
   }
+  const path = require("path");
 };
 bootstrap();
-
-bot.catch((err) => {
-  const ctx = err.ctx;
-  console.error(`Error while handling update ${ctx.update.update_id}:`);
-  const e = err.error;
-  if (e instanceof GrammyError) {
-    console.error("Error in request:", e.description);
-    bot.api.sendMessage(-1001924591062, "Error in request:", e.description);
-  } else if (e instanceof HttpError) {
-    console.error("Could not contact Telegram:", e);
-    bot.api.sendMessage(-1001924591062, "Could not contact Telegram:", e);
-  } else {
-    console.error("Unknown error:", e);
-    bot.api.sendMessage(-1001924591062, "Unknown error:", e);
-  }
-});
 
 bot.start(console.log("Lotin-Krill-bot started"));
